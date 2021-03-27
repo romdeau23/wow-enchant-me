@@ -113,13 +113,13 @@ function EM:initFrames()
         textFrame:SetPoint('TOPLEFT', slotInfo.slotFrame, 'TOPLEFT', 3, -2)
         textFrame:SetSize(10, 10)
         textFrame:SetBackdrop({bgFile = nil, edgeFile = nil, tile = false, tileSize = 32, edgeSize = 0, insets = {left = 0, right = 0, top = 0, bottom = 0}})
-		textFrame:SetBackdropColor(0,0,0,0)
+        textFrame:SetBackdropColor(0,0,0,0)
 
-		local text = textFrame:CreateFontString(nil, 'ARTWORK')
-		text:SetFont('Fonts\\FRIZQT__.TTF', 11, 'OUTLINE')
-		text:SetPoint('TOPLEFT', textFrame, 'TOPLEFT', 0, 0)
+        local text = textFrame:CreateFontString(nil, 'ARTWORK')
+        text:SetFont('Fonts\\FRIZQT__.TTF', 11, 'THICKOUTLINE')
+        text:SetPoint('TOPLEFT', textFrame, 'TOPLEFT', 0, 0)
 
-		textFrame.text = text
+        textFrame.text = text
         slotInfo.textFrame = textFrame
     end
 end
