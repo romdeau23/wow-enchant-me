@@ -1,17 +1,15 @@
-local addonName, EM = ...
-
-EnchantMeAddon = EM
-
-EM.frame = CreateFrame('Frame')
-EM.eventHandlers = {
+local _, addon = ...
+local frame = CreateFrame('Frame')
+local eventHandlers = {
     PLAYER_EQUIPMENT_CHANGED = 'update',
     SOCKET_INFO_UPDATE = 'update',
-    ITEM_UPGRADE_MASTER_UPDATE = 'update',
     ACTIVE_TALENT_GROUP_CHANGED = 'update',
     PLAYER_LEVEL_UP = 'update',
     BAG_UPDATE = 'onBagUpdate',
 }
-EM.slots = {
+EnchantMeAddon = addon
+
+local slots = {
     HeadSlot = {
         slotFrame = CharacterHeadSlot,
         enchantable = false,
@@ -42,17 +40,24 @@ EM.slots = {
     },
     SecondaryHandSlot = {
         slotFrame = CharacterSecondaryHandSlot,
-        enchantable = false,
+        enchantable = true,
+        condition = function (itemId)
+            return addon.matchInvType(itemId, {INVTYPE_WEAPON = true}) -- off hand weapons
+        end,
     },
     HandsSlot = {
         slotFrame = CharacterHandsSlot,
         enchantable = true,
-        classes = {
-            WARRIOR = {true, true, true}, -- all specs
-            PALADIN = {false, true, true}, -- prot, retri
-            DEATHKNIGHT = {true, true, true}, -- all specs
-        },
-        profs = {[182] = true, [186] = true, [393] = true}, -- herb, mining, skinning
+        condition = function ()
+            return (
+                addon.matchClassAndSpec({
+                    WARRIOR = {true, true, true}, -- all specs
+                    PALADIN = {false, true, true}, -- prot, retri
+                    DEATHKNIGHT = {true, true, true}, -- all specs
+                })
+                or addon.matchProfession({182, 186, 393}) -- herb, mining, skinning
+            )
+        end,
     },
     WaistSlot = {
         slotFrame = CharacterWaistSlot,
@@ -83,32 +88,33 @@ EM.slots = {
         enchantable = false,
     },
 }
-EM.socketStats = {
+local socketStats = {
     'EMPTY_SOCKET_RED',
     'EMPTY_SOCKET_YELLOW',
     'EMPTY_SOCKET_BLUE',
     'EMPTY_SOCKET_META',
     'EMPTY_SOCKET_PRISMATIC',
+    'EMPTY_SOCKET_DOMINATION',
 }
 
-function EM:initialize(name)
-    self:registerEvents()
-    self:initFrames()
-    self:update()
+function addon.init()
+    addon.registerEvents()
+    addon.initFrames()
+    addon.update()
 end
 
-function EM:registerEvents()
-    for event in pairs(self.eventHandlers) do
-        self.frame:RegisterEvent(event)
+function addon.registerEvents()
+    for event in pairs(eventHandlers) do
+        frame:RegisterEvent(event)
     end
 
-    self.frame:SetScript('OnEvent', function (frame, event, ...)
-        self[self.eventHandlers[event]](self, ...)
+    frame:SetScript('OnEvent', function (_, event, ...)
+        addon[eventHandlers[event]](...)
     end)
 end
 
-function EM:initFrames()
-    for slot, slotInfo in pairs(self.slots) do
+function addon.initFrames()
+    for _, slotInfo in pairs(slots) do
         local textFrame = CreateFrame('Frame', nil, slotInfo.slotFrame, 'BackdropTemplate')
         textFrame:SetPoint('TOPLEFT', slotInfo.slotFrame, 'TOPLEFT', 3, -2)
         textFrame:SetSize(10, 10)
@@ -124,21 +130,21 @@ function EM:initFrames()
     end
 end
 
-function EM:update()
+function addon.update()
     if UnitLevel('player') < 50 then
         return
     end
 
-    for slot, slotInfo in pairs(self.slots) do
+    for slot, slotInfo in pairs(slots) do
         local itemLink = GetInventoryItemLink('player', GetInventorySlotInfo(slot))
         local needsEnchant = false
         local needsGem = false
         local text
 
         if itemLink then
-            local itemInfo = self:parseItemLink(itemLink)
-            needsEnchant = self:needsEnchant(slot, slotInfo, itemInfo)
-            needsGem = self:needsGem(slot, itemLink, itemInfo)
+            local itemLinkValues = addon.parseItemLink(itemLink)
+            needsEnchant = addon.needsEnchant(slotInfo, itemLinkValues)
+            needsGem = addon.needsGem(itemLink, itemLinkValues)
         end
 
         if needsEnchant and needsGem then
@@ -158,42 +164,35 @@ function EM:update()
     end
 end
 
-function EM:onBagUpdate(bagId)
+function addon.onBagUpdate(bagId)
     if bagId == 0 then
-        self:update()
+        addon.update()
     end
 end
 
-function EM:needsEnchant(slot, slotInfo, itemInfo)
-    if not slotInfo.enchantable or itemInfo[2] ~= '' then
+function addon.parseItemLink(itemLink)
+    local _, _, itemString = string.find(itemLink, '|Hitem:(.+)|h')
+
+    return {strsplit(':', itemString or '')}
+end
+
+function addon.needsEnchant(slotInfo, itemLinkValues)
+    if not slotInfo.enchantable or itemLinkValues[2] ~= '' then
         return false -- not enchantable or already enchanted
     end
 
-    if slotInfo.classes then
-        local class = select(2, UnitClass('player'))
-        local spec = GetSpecialization()
-
-        if slotInfo.classes[class] and slotInfo.classes[class][spec] then
-            return true -- needed based on class & spec
-        end
+    if slotInfo.condition and not slotInfo.condition(itemLinkValues[1]) then
+        return false -- condition not satisfied
     end
 
-    if slotInfo.profs then
-        for _, id in ipairs(self:getProfessions()) do
-            if slotInfo.profs[id] then
-                return true -- needed based on profession
-            end
-        end
-    end
-
-    return not slotInfo.classes and not slotInfo.profs -- needed unless there are any conditions
+    return true
 end
 
-function EM:needsGem(slot, itemLink, itemInfo)
+function addon.needsGem(itemLink, itemLinkValues)
     local numGems = 0
 
     for i = 3, 6 do
-        if itemInfo[i] ~= '' then
+        if itemLinkValues[i] ~= '' then
             numGems = numGems + 1
         end
     end
@@ -205,30 +204,50 @@ function EM:needsGem(slot, itemLink, itemInfo)
         return false
     end
 
-    for _, stat in pairs(self.socketStats) do
+    for _, stat in pairs(socketStats) do
         numSockets = numSockets + (stats[stat] or 0)
     end
 
     return numGems < numSockets
 end
 
-function EM:getProfessions()
+function addon.getProfessions()
+    local profs = {}
     local prof1, prof2 = GetProfessions()
-    local ids = {}
 
-    for _, prof in ipairs({prof1, prof2}) do
-        local id = select(7, GetProfessionInfo(prof))
-        table.insert(ids, id)
+    for _, index in ipairs({prof1, prof2}) do
+        if index then
+            profs[select(7, GetProfessionInfo(index))] = true
+        end
     end
 
-    return ids
+    return profs
 end
 
-function EM:parseItemLink(itemLink)
-    local _, _, itemString = string.find(itemLink, '|Hitem:(.+)|h')
+function addon.matchClassAndSpec(map)
+    local class = select(2, UnitClass('player'))
+    local spec = GetSpecialization()
 
-    return {strsplit(':', itemString or '')}
+    return map[class] ~= nil and map[class][spec] == true
+end
+
+function addon.matchProfession(profs)
+    local knownProfs = addon.getProfessions()
+
+    for _, id in ipairs(profs) do
+        if knownProfs[id] then
+            return true
+        end
+    end
+
+    return false
+end
+
+function addon.matchInvType(itemId, map)
+    local invType = select(9, GetItemInfo(itemId))
+
+    return invType ~= nil and map[invType] ~= nil
 end
 
 -- init
-EM:initialize()
+addon.init()
