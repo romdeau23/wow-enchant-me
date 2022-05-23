@@ -1,5 +1,3 @@
 package-as: EnchantMe
-move-folders:
-    EnchantMe/EnchantMe: EnchantMe
 ignore:
     - README.rst
