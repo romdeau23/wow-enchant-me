@@ -1,8 +1,8 @@
 Enchant Me (WoW addon)
 ######################
 
-This is an addon for World of Warcraft that notifies the player of missing
-enchants and gems on their gear.
+This small addon will notify you of missing enchantments and gems on your equipped items.
 
-See the project page at curseforge.com for more information and downloads:
-https://www.curseforge.com/wow/addons/enchant-me
+- "E" or "G" indicator will be displayed on the equipped item depending on what's missing
+- takes your current class, specialization and professions into account
+- note: only shadowlands content is supported, the check is disabled on characters below level 50
