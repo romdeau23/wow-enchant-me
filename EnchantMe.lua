@@ -42,7 +42,7 @@ local slots = {
         slotFrame = CharacterSecondaryHandSlot,
         enchantable = true,
         condition = function (itemId)
-            return addon.matchInvType(itemId, {INVTYPE_WEAPON = true}) -- off hand weapons
+            return addon.matchInvType(itemId, {INVTYPE_WEAPON = true, INVTYPE_2HWEAPON = true}) -- off hand weapons
         end,
     },
     HandsSlot = {
