@@ -1,6 +1,6 @@
-## Interface: 90205
+## Interface: 90207
 ## Title: EnchantMe
-## Version: 1.0.2
+## Version: 1.0.3
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## X-Website: https://github.com/romdeau23/wow-enchant-me
