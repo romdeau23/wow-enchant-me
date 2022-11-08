@@ -47,17 +47,7 @@ local slots = {
     },
     HandsSlot = {
         slotFrame = CharacterHandsSlot,
-        enchantable = true,
-        condition = function ()
-            return (
-                addon.matchClassAndSpec({
-                    WARRIOR = {true, true, true}, -- all specs
-                    PALADIN = {false, true, true}, -- prot, retri
-                    DEATHKNIGHT = {true, true, true}, -- all specs
-                })
-                or addon.matchProfession({182, 186, 393}) -- herb, mining, skinning
-            )
-        end,
+        enchantable = false,
     },
     WaistSlot = {
         slotFrame = CharacterWaistSlot,
@@ -94,7 +84,6 @@ local socketStats = {
     'EMPTY_SOCKET_BLUE',
     'EMPTY_SOCKET_META',
     'EMPTY_SOCKET_PRISMATIC',
-    'EMPTY_SOCKET_DOMINATION',
 }
 
 function addon.init()
@@ -131,7 +120,7 @@ function addon.initFrames()
 end
 
 function addon.update()
-    if UnitLevel('player') < 50 then
+    if UnitLevel('player') < 60 then
         return
     end
 
@@ -209,38 +198,6 @@ function addon.needsGem(itemLink, itemLinkValues)
     end
 
     return numGems < numSockets
-end
-
-function addon.getProfessions()
-    local profs = {}
-    local prof1, prof2 = GetProfessions()
-
-    for _, index in ipairs({prof1, prof2}) do
-        if index then
-            profs[select(7, GetProfessionInfo(index))] = true
-        end
-    end
-
-    return profs
-end
-
-function addon.matchClassAndSpec(map)
-    local class = select(2, UnitClass('player'))
-    local spec = GetSpecialization()
-
-    return map[class] ~= nil and map[class][spec] == true
-end
-
-function addon.matchProfession(profs)
-    local knownProfs = addon.getProfessions()
-
-    for _, id in ipairs(profs) do
-        if knownProfs[id] then
-            return true
-        end
-    end
-
-    return false
 end
 
 function addon.matchInvType(itemId, map)
