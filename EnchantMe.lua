@@ -17,6 +17,7 @@ local slots = {
     NeckSlot = {
         slotFrame = CharacterNeckSlot,
         enchantable = false,
+        socketable = 3,
     },
     ShoulderSlot = {
         slotFrame = CharacterShoulderSlot,
@@ -126,26 +127,28 @@ function addon.update()
 
     for slot, slotInfo in pairs(slots) do
         local itemLink = GetInventoryItemLink('player', GetInventorySlotInfo(slot))
-        local needsEnchant = false
-        local needsGem = false
-        local text
+        local flags = {}
 
         if itemLink then
             local itemLinkValues = addon.parseItemLink(itemLink)
-            needsEnchant = addon.needsEnchant(slotInfo, itemLinkValues)
-            needsGem = addon.needsGem(itemLink, itemLinkValues)
+
+            if addon.needsEnchant(slotInfo, itemLinkValues) then
+                table.insert(flags, 'E')
+            end
+
+            local numGems, numSockets = addon.getGemStats(itemLink, itemLinkValues)
+
+            if numGems < numSockets then
+                table.insert(flags, 'G')
+            end
+
+            if slotInfo.socketable and numSockets < slotInfo.socketable then
+                table.insert(flags, 'S')
+            end
         end
 
-        if needsEnchant and needsGem then
-            text = 'E,G'
-        elseif needsEnchant then
-            text = 'E'
-        elseif needsGem then
-            text = 'G'
-        end
-
-        if text then
-            slotInfo.textFrame.text:SetFormattedText('|cffff0000%s|r', text)
+        if #flags > 0 then
+            slotInfo.textFrame.text:SetFormattedText('|cffff0000%s|r', table.concat(flags, ','))
             slotInfo.textFrame:Show()
         else
             slotInfo.textFrame:Hide()
@@ -177,7 +180,7 @@ function addon.needsEnchant(slotInfo, itemLinkValues)
     return true
 end
 
-function addon.needsGem(itemLink, itemLinkValues)
+function addon.getGemStats(itemLink, itemLinkValues)
     local numGems = 0
 
     for i = 3, 6 do
@@ -186,18 +189,19 @@ function addon.needsGem(itemLink, itemLinkValues)
         end
     end
 
-    local numSockets = 0
     local stats = GetItemStats(itemLink)
 
     if stats == nil then
-        return false
+        return 0, 0
     end
+
+    local numSockets = 0
 
     for _, stat in pairs(socketStats) do
         numSockets = numSockets + (stats[stat] or 0)
     end
 
-    return numGems < numSockets
+    return numGems, numSockets
 end
 
 function addon.matchInvType(itemId, map)
