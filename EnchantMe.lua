@@ -52,7 +52,7 @@ local slots = {
     },
     WaistSlot = {
         slotFrame = CharacterWaistSlot,
-        enchantable = false,
+        enchantable = true,
     },
     LegsSlot = {
         slotFrame = CharacterLegsSlot,
