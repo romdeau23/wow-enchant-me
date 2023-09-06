@@ -1,6 +1,6 @@
-## Interface: 100105
+## Interface: 100107
 ## Title: EnchantMe
-## Version: 1.2.3
+## Version: 1.2.4
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## IconTexture: Interface\AddOns\EnchantMe\icon
