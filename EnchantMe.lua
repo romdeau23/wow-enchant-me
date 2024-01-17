@@ -12,7 +12,10 @@ EnchantMeAddon = addon
 local slots = {
     HeadSlot = {
         slotFrame = CharacterHeadSlot,
-        enchantable = false,
+        enchantable = true,
+        condition = function ()
+            return C_QuestLog.IsQuestFlaggedCompleted(78429) -- [Incandescent Essence] from Amirdrassil raid quest
+        end,
     },
     NeckSlot = {
         slotFrame = CharacterNeckSlot,
