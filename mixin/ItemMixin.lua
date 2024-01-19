@@ -52,7 +52,7 @@ function ItemMixin:GetGemStats()
     return numGems, numSockets
 end
 
----@return string|nil value of INVTYPE_... constants
+---@return string|nil INVTYPE_X
 function ItemMixin:GetInvType()
     return (select(9, GetItemInfo(self:GetLinkValues()[1])))
 end

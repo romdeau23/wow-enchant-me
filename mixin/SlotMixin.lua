@@ -35,7 +35,7 @@ function SlotMixin.GetDefaultSlots()
                 -- off hand weapons can be enchanted
                 local invType = item:GetInvType()
 
-                return invType == INVTYPE_WEAPON or invType == INVTYPE_2HWEAPON
+                return invType == 'INVTYPE_WEAPON' or invType == 'INVTYPE_2HWEAPON'
             end,
         }),
         HandsSlot = addon.new(SlotMixin, {
