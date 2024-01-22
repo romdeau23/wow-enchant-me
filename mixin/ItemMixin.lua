@@ -40,7 +40,7 @@ function ItemMixin:GetGemStats()
     local stats = C_Item.GetItemStats(self._link)
 
     if stats == nil then
-        return 0, 0
+        return numGems, numGems -- no stats available, assume found gems match the number of sockets
     end
 
     local numSockets = 0

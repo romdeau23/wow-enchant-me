@@ -12,7 +12,7 @@ function PlayerHandlerMixin:Init()
     end
 
     -- register event listeners
-    addon.on('PLAYER_ENTERING_WORLD', addon.bind(self, 'UpdateFlags'))
+    addon.on('PLAYER_ENTERING_WORLD', addon.bind(self, 'OnLogin'))
     addon.on('PLAYER_EQUIPMENT_CHANGED', addon.bind(self, 'UpdateFlags'))
     addon.on('PLAYER_LEVEL_UP', addon.bind(self, 'UpdateFlags'))
     addon.on('SOCKET_INFO_UPDATE', addon.bind(self, 'UpdateFlags'))
@@ -21,6 +21,10 @@ end
 
 function PlayerHandlerMixin:GetSlotFrame(slotName)
     return _G['Character' .. slotName]
+end
+
+function PlayerHandlerMixin:OnLogin()
+    C_Timer.After(0, addon.bind(self, 'UpdateFlags')) -- delay the update by 1 frame as item stats aren't available yet
 end
 
 function PlayerHandlerMixin:OnBagUpdate(bagId)
