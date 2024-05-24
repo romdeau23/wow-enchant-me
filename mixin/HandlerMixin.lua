@@ -11,16 +11,16 @@ function HandlerMixin:IsAvailable()
 end
 
 function HandlerMixin:UpdateFlags()
-    if not self:IsAvailable() then
+    if
+        not self:IsAvailable()
+        or UnitLevel(self.unit) < minLevel -- disable for low level characters
+        or PlayerGetTimerunningSeasonID() ~= nil -- disable in timerunning
+    then
         return
     end
 
     if not self.indicators then
         self:CreateIndicators()
-    end
-
-    if UnitLevel(self.unit) < minLevel then
-        return
     end
 
     for slotName, slot in pairs(self.slots) do
