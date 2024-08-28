@@ -88,42 +88,9 @@ local socketStats = {
 }
 
 function addon.init()
-    addon.makeToolTipScannerForUpgradeLevel()
     addon.registerEvents()
     addon.initFrames()
     addon.update()
-end
-
--- how to find the upgrade level
-local UP1 = ITEM_UPGRADE_TOOLTIP_FORMAT -- "Upgrade Level: %d/%d" -- Upgrade Level: 1/8
-local UP2 = ITEM_UPGRADE_TOOLTIP_FORMAT_STRING -- "Upgrade Level: %s %d/%d" -- Upgrade Level: Veteran 1/8
-local FIND_UP_1 = "^" .. gsub(UP1, "%%(d)", "(%%%d+)")
-local FIND_UP_2 = "^" .. gsub(gsub(UP2, "%%(d)", "(%%%d+)"), "%%(s)", "(%%%a*)")
-local scantip
-function addon.makeToolTipScannerForUpgradeLevel()
-    scantip = CreateFrame("GameTooltip", "MyScanningTooltip", nil, "GameTooltipTemplate")
-    scantip:SetOwner(UIParent, "ANCHOR_NONE")
-end
-
--- Create a function for simplicity's sake:
-local function GetItemUpgradeLevel(itemLink)
-    -- Pass the item link to the tooltip:
-    scantip:SetHyperlink(itemLink)
-
-    -- Scan the tooltip:
-    for i = 2, scantip:NumLines() do -- Line 1 is always the name so you can skip it.
-        local text = _G["MyScanningTooltipTextLeft"..i]:GetText()
-        if text and text ~= "" then
-            local levelClass, currentUpgradeLevel, maxUpgradeLevel = nil, strmatch(text, FIND_UP_1)
-            if not currentUpgradeLevel then
-                levelClass, currentUpgradeLevel, maxUpgradeLevel = strmatch(text, FIND_UP_2)
-            end
-            --print("pat:", FIND_UP_2, "text:", text, " currentUpgradeLevel:", currentUpgradeLevel, " maxUpgradeLevel:", maxUpgradeLevel)
-            if currentUpgradeLevel then
-                return levelClass, currentUpgradeLevel, maxUpgradeLevel
-            end
-        end
-    end
 end
 
 function addon.registerEvents()
@@ -161,10 +128,9 @@ function addon.update()
     for slot, slotInfo in pairs(slots) do
         local itemLink = GetInventoryItemLink('player', GetInventorySlotInfo(slot))
         local flags = {}
-        local upgradeStr, itemLinkValues
 
         if itemLink then
-            upgradeStr, itemLinkValues = addon.parseItemLink(itemLink)
+            local itemLinkValues = addon.parseItemLink(itemLink)
 
             if addon.needsEnchant(slotInfo, itemLinkValues) then
                 table.insert(flags, 'E')
@@ -181,25 +147,8 @@ function addon.update()
             end
         end
 
-        local ttStr
-        local upgradeStrHex = "0000ff00"
-        local hasTxt = false
-        if upgradeStr then
-            hasTxt = true
-            local itemName, itemLink, itemQuality = GetItemInfo(itemLink)
-            local r, g, b, hex = GetItemQualityColor(itemQuality)
-            upgradeStrHex = hex
-            --print(itemLink, " - upgradeStr:", upgradeStr)
-        end
         if #flags > 0 then
-            hasTxt = true
-            ttStr = table.concat(flags, ',')
-            --print(itemLink, " - ttStr:", ttStr)
-        end
-
-        if hasTxt then
-            slotInfo.textFrame.text:SetJustifyH("LEFT")
-            slotInfo.textFrame.text:SetFormattedText('|c%s%s|r%s|cffff0000%s|r', upgradeStrHex, upgradeStr or " ", (upgradeStr and "\r") or "",  ttStr or "")
+            slotInfo.textFrame.text:SetFormattedText('|cffff0000%s|r', table.concat(flags, ','))
             slotInfo.textFrame:Show()
         else
             slotInfo.textFrame:Hide()
@@ -214,21 +163,9 @@ function addon.onBagUpdate(bagId)
 end
 
 function addon.parseItemLink(itemLink)
-    local levelClass, level, max = GetItemUpgradeLevel(itemLink)
-    --print("#####", levelClass, level, max)
-    local upgradeStr
-    if level then
-        if levelClass then
-            levelClass = string.lower( string.sub(levelClass,1,1) )
-        else
-            levelClass = ""
-        end
-        upgradeStr = levelClass .. level .. "/" .. max
-    end
-
     local _, _, itemString = string.find(itemLink, '|Hitem:(.+)|h')
-    --print("###",strsplit(':', itemString or ''))
-    return upgradeStr, {strsplit(':', itemString or '')}
+
+    return {strsplit(':', itemString or '')}
 end
 
 function addon.needsEnchant(slotInfo, itemLinkValues)
