@@ -25,6 +25,7 @@ function config.getDefaultConfig()
         version = latestVersion,
         indicatorPos = 'TOPLEFT',
         flagColor = 'ffff0000',
+        ignoreSockets = false,
     }
 end
 
