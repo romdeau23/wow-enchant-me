@@ -76,7 +76,7 @@ function SlotMixin:GetFlags(itemLink)
         table.insert(flags, 'G')
     end
 
-    if self.socketable and numSockets < self.socketable then
+    if self.socketable and numSockets < self.socketable and not addon.config.db.ignoreSockets then
         table.insert(flags, 'S')
     end
 

@@ -42,6 +42,11 @@ function settings.init()
         Settings.CreateDropdown(category, setting, options, 'Color of the indicator flag text')
     end)
 
+    -- ignore sockets
+    addSetting('ignoreSockets', 'Ignore sockets', 'boolean', function (setting)
+        Settings.CreateCheckbox(category, setting, 'Ignore missing sockets (neck, rings)')
+    end)
+
     Settings.RegisterAddOnCategory(category)
 end
 

@@ -1,6 +1,6 @@
 local _, addon = ...
 local config, private = addon.module('config')
-local latestVersion = 2
+local latestVersion = 3
 
 function config.init()
     if EnchantMeAddonConfig then
@@ -44,5 +44,8 @@ end
 private.migrations = {
     [2] = function ()
         config.db.ignoreBelt = nil
+    end,
+    [3] = function ()
+        config.db.ignoreSockets = false
     end,
 }
