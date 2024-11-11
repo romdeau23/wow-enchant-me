@@ -25,7 +25,7 @@ function settings.init()
             return container:GetData()
         end
 
-        Settings.CreateDropdown(category, setting, options, 'Position of the missing enchant indicator on the equipment item frame')
+        Settings.CreateDropdown(category, setting, options, 'Position of the indicators on the equipment item frame')
     end)
 
     -- flag color
@@ -42,9 +42,14 @@ function settings.init()
         Settings.CreateDropdown(category, setting, options, 'Color of the indicator flag text')
     end)
 
-    -- ignore sockets
-    addSetting('ignoreSockets', 'Ignore sockets', 'boolean', function (setting)
-        Settings.CreateCheckbox(category, setting, 'Ignore missing sockets (neck, rings)')
+    -- show missing jewelry sockets
+    addSetting('showMissingJewelrySockets', 'Show missing jewelry sockets', 'boolean', function (setting)
+        Settings.CreateCheckbox(category, setting, 'Indicate when sockets can be added to neck or rings')
+    end)
+
+    -- show missing armor sockets
+    addSetting('showMissingArmorSockets', 'Show missing armor sockets', 'boolean', function (setting)
+        Settings.CreateCheckbox(category, setting, 'Indicate when sockets can be added to armor')
     end)
 
     Settings.RegisterAddOnCategory(category)
