@@ -1,11 +1,17 @@
 local _, addon = ...
 local ItemMixin = addon.namespace('ItemMixin')
 local socketStats = {
+    -- generic sockets
     'EMPTY_SOCKET_RED',
     'EMPTY_SOCKET_YELLOW',
     'EMPTY_SOCKET_BLUE',
     'EMPTY_SOCKET_META',
     'EMPTY_SOCKET_PRISMATIC',
+
+    -- 11.0.7 Cyrce's Circlet
+    'EMPTY_SOCKET_SINGINGSEA',
+    'EMPTY_SOCKET_SINGINGTHUNDER',
+    'EMPTY_SOCKET_SINGINGWIND',
 }
 
 function ItemMixin:Init(itemLink)

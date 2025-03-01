@@ -1,6 +1,6 @@
 ## Interface: 110100
 ## Title: EnchantMe
-## Version: 1.6.2
+## Version: 1.6.3
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## SavedVariables: EnchantMeAddonConfig
