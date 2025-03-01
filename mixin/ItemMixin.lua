@@ -1,5 +1,5 @@
 local _, addon = ...
-local ItemMixin, private = addon.namespace('ItemMixin')
+local ItemMixin = addon.namespace('ItemMixin')
 local socketStats = {
     'EMPTY_SOCKET_RED',
     'EMPTY_SOCKET_YELLOW',
