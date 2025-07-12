@@ -9,6 +9,10 @@ function PlayerHandlerMixin:Init()
     self.unit = 'player'
     self.slots = addon.SlotMixin.GetDefaultSlots()
 
+    self.slots.HeadSlot.enchantCondition = function ()
+        return C_QuestLog.IsQuestFlaggedCompleted(90719) -- Borrowing Corruption
+    end
+
     -- update flags once character frame is shown
     hooksecurefunc(CharacterFrame, 'Show', addon.bind(self, 'UpdateFlags'))
 
@@ -18,6 +22,9 @@ function PlayerHandlerMixin:Init()
     addon.on('SOCKET_INFO_UPDATE', addon.bind(self, 'UpdateFlagsIfVisible')) -- socket info becoming available
     addon.on('BAG_UPDATE', addon.bind(self, 'OnBagUpdate')) -- adding enchants, gems
     addon.on('BAG_UPDATE_DELAYED', addon.bind(self, 'OnBagUpdateDelayed')) -- adding enchants, gems
+
+    -- plugin event
+    addon.plugin.dispatch('player_handler.init', self)
 end
 
 function PlayerHandlerMixin:GetSlotFrame(slotName)

@@ -1,6 +1,6 @@
 ## Interface: 110107
 ## Title: EnchantMe
-## Version: 1.6.4
+## Version: 1.7.0
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## SavedVariables: EnchantMeAddonConfig
@@ -21,6 +21,7 @@
 lib/globals.lua
 lib/namespace.lua
 lib/event.lua
+lib/plugin.lua
 lib/defer.lua
 lib/mixin.lua
 lib/module.lua
