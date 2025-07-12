@@ -60,7 +60,7 @@ function plugin.dispatch(eventName, ...)
 
     if toClear then
         for i = #toClear, 1, -1 do
-            table.remove(listenerMap[eventName], i)
+            table.remove(listenerMap[eventName], toClear[i])
         end
 
         if #listenerMap[eventName] == 0 then
