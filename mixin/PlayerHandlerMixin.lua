@@ -9,10 +9,6 @@ function PlayerHandlerMixin:Init()
     self.unit = 'player'
     self.slots = addon.SlotMixin.GetDefaultSlots()
 
-    self.slots.HeadSlot.enchantCondition = function ()
-        return C_QuestLog.IsQuestFlaggedCompleted(90719) -- Borrowing Corruption
-    end
-
     -- update flags once character frame is shown
     hooksecurefunc(CharacterFrame, 'Show', addon.bind(self, 'UpdateFlags'))
 

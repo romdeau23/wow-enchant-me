@@ -23,7 +23,6 @@ function SlotMixin.GetDefaultSlots()
             name = 'HeadSlot',
             socketable = 1,
             socketCondition = showMissingArmorSockets,
-            enchantable = true, -- 11.1.5 horrific vision runes
         }),
         NeckSlot = addon.new(SlotMixin, {
             name = 'NeckSlot',
