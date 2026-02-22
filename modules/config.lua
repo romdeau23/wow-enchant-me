@@ -1,58 +1,47 @@
-local _, addon = ...
-local config, private = addon.module('config'), {}
-local latestVersion = 4
+---@class Addon
+local addon = select(2, ...)
+local config, private = addon.module(), {}
+addon.config = config
+
+---@type ConfigModule.Config
+local DEFAULT_CONFIG = {
+    indicatorPos = 'TOPLEFT',
+    flagColor = 'ffff0000',
+    showMissingArmorSockets = false,
+}
+
+---@class ConfigModule.Config
+---@field indicatorPos string
+---@field flagColor string
+---@field showMissingArmorSockets boolean
 
 function config.init()
-    if EnchantMeAddonConfig then
-        -- try to load and migrate existing config
-        config.db = EnchantMeAddonConfig
-
-        local success, result = pcall(private.migrateConfiguration)
-
-        if not success then
-            -- reset config on migration error
-            private.loadDefaultConfig()
-            CallErrorHandler(result)
-        end
-    else
-        -- no config data yet - load default
-        private.loadDefaultConfig()
-    end
+    config.db = addon.loadSavedVar(
+        'EnchantMeAddonConfig',
+        5,
+        DEFAULT_CONFIG,
+        private.migrations
+    )
 end
 
+---@return ConfigModule.Config
 function config.getDefaultConfig()
-    return {
-        version = latestVersion,
-        indicatorPos = 'TOPLEFT',
-        flagColor = 'ffff0000',
-        showMissingJewelrySockets = true,
-        showMissingArmorSockets = false,
-    }
-end
-
-function private.loadDefaultConfig()
-    EnchantMeAddonConfig = config.getDefaultConfig()
-    config.db = EnchantMeAddonConfig
-end
-
-function private.migrateConfiguration()
-    for to = config.db.version + 1, latestVersion do
-        private.migrations[to]()
-    end
-
-    config.db.version = latestVersion
+    return DEFAULT_CONFIG
 end
 
 private.migrations = {
-    [2] = function ()
-        config.db.ignoreBelt = nil
+    [2] = function (data)
+        data.ignoreBelt = nil
     end,
-    [3] = function ()
-        config.db.ignoreSockets = false
+    [3] = function (data)
+        data.ignoreSockets = false
     end,
-    [4] = function ()
-        config.db.showMissingJewelrySockets = not config.db.ignoreSockets
-        config.db.showMissingArmorSockets = false
-        config.db.ignoreSockets = nil
+    [4] = function (data)
+        data.showMissingJewelrySockets = not data.ignoreSockets
+        data.showMissingArmorSockets = false
+        data.ignoreSockets = nil
+    end,
+    [5] = function (data)
+        data.showMissingJewelrySockets = nil
     end,
 }

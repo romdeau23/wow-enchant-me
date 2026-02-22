@@ -1,20 +1,32 @@
-local _, addon = ...
-local main = addon.module('main')
-local playerHandler
-local inspectHandler
+---@class Addon
+local addon = select(2, ...)
+local main, private = addon.module(), {}
+addon.main = main
 
-main.MIN_UNIT_LEVEL = 71
-main.MAX_UNIT_LEVEL = 80
+---@type EnchantHandler[]
+local handlers = {}
 
 function main.init()
-    playerHandler = addon.new(addon.PlayerHandlerMixin)
-    inspectHandler = addon.new(addon.InspectHandlerMixin)
+    addon.on('PLAYER_LOGIN', function ()
+        private.createHandlers()
+
+        return false
+    end)
 end
 
 function main.updateHandlers()
-    playerHandler:UpdateIndicators()
-    playerHandler:UpdateFlags()
+    for _, handler in ipairs(handlers) do
+        handler.updateFrames()
+        handler.updateFlags()
+    end
+end
 
-    inspectHandler:UpdateIndicators()
-    inspectHandler:UpdateFlags()
+function private.createHandlers()
+    if PlayerGetTimerunningSeasonID() then
+        -- disable enchant checks when timerunning
+        return
+    end
+
+    table.insert(handlers, addon.createPlayerHandler())
+    table.insert(handlers, addon.createInspectHandler())
 end

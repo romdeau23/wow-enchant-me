@@ -1,6 +1,6 @@
-## Interface: 110207, 120000
+## Interface: 120001
 ## Title: Enchant Me
-## Version: 1.7.4
+## Version: 1.8.0
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## SavedVariables: EnchantMeAddonConfig
@@ -18,19 +18,21 @@
 ## Category-zhCN: 装备
 ## Category-zhTW: 裝備
 
+lib/gameEvent.lua
+lib/init.lua
+lib/const.lua
+lib/debounce.lua
 lib/globals.lua
-lib/namespace.lua
-lib/event.lua
-lib/plugin.lua
-lib/defer.lua
-lib/mixin.lua
 lib/module.lua
-mixin/HandlerMixin.lua
-mixin/PlayerHandlerMixin.lua
-mixin/InspectHandlerMixin.lua
-mixin/ItemMixin.lua
-mixin/SlotMixin.lua
-mixin/IndicatorMixin.lua
+lib/pack.lua
+lib/savedVar.lua
 modules/config.lua
-modules/settings.lua
+modules/equipment/item.lua
+modules/equipment/slot.lua
+modules/handler/handler.lua
+modules/handler/playerHandler.lua
+modules/handler/inspectHandler.lua
+modules/handler/slots.lua
+modules/ui/settings.lua
+modules/ui/indicator.lua
 modules/main.lua

@@ -1,5 +1,6 @@
-local _, addon = ...
-local settings, private = addon.module('settings'), {}
+---@class Addon
+local addon = select(2, ...)
+local settings, private = addon.module(), {}
 
 function settings.init()
     local category = Settings.RegisterVerticalLayoutCategory('Enchant Me')
@@ -42,11 +43,6 @@ function settings.init()
         Settings.CreateDropdown(category, setting, options, 'Color of the indicator flag text')
     end)
 
-    -- show missing jewelry sockets
-    addSetting('showMissingJewelrySockets', 'Show missing jewelry sockets', 'boolean', function (setting)
-        Settings.CreateCheckbox(category, setting, 'Indicate when sockets can be added to neck or rings')
-    end)
-
     -- show missing armor sockets
     addSetting('showMissingArmorSockets', 'Show missing armor sockets', 'boolean', function (setting)
         Settings.CreateCheckbox(category, setting, 'Indicate when sockets can be added to armor')
@@ -55,6 +51,6 @@ function settings.init()
     Settings.RegisterAddOnCategory(category)
 end
 
-function private.onSettingChanged(_, setting, value)
+function private.onSettingChanged()
     addon.main.updateHandlers()
 end
