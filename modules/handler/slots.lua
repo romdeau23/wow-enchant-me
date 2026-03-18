@@ -14,11 +14,11 @@ function addon.getBaseSlots()
             socketable = 1,
             socketCondition = showMissingArmorSockets,
         }),
-        -- NeckSlot = addon.createSlot({})
+        NeckSlot = addon.createSlot({}),
         ShoulderSlot = addon.createSlot({
             enchantable = true,
         }),
-        -- BackSlot = addon.createSlot({})
+        BackSlot = addon.createSlot({}),
         ChestSlot = addon.createSlot({
             enchantable = true,
         }),
@@ -38,7 +38,7 @@ function addon.getBaseSlots()
                 return invType == 'INVTYPE_WEAPON' or invType == 'INVTYPE_2HWEAPON'
             end,
         }),
-        -- HandsSlot = {}),
+        HandsSlot = addon.createSlot({}),
         WaistSlot = addon.createSlot({
             socketable = 1,
             socketCondition = showMissingArmorSockets,

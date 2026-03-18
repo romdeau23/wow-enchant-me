@@ -6,6 +6,7 @@ local positionOffsets = {
     TOPRIGHT = {x = -3, y = -2},
     BOTTOMLEFT = {x = 3, y = 2},
     BOTTOMRIGHT = {x = -3, y = 2},
+    CENTER = {x = 0, y = -3.5},
 }
 
 ---@param parentFrame table
@@ -19,13 +20,11 @@ function addon.createIndicator(parentFrame)
     assert(parentFrame)
 
     local frame = CreateFrame('Frame', nil, parentFrame, 'BackdropTemplate')
-    frame:SetSize(10, 10)
+    frame:SetAllPoints()
     frame:SetBackdrop({bgFile = nil, edgeFile = nil, tile = false, tileSize = 32, edgeSize = 0, insets = {left = 0, right = 0, top = 0, bottom = 0}})
     frame:SetBackdropColor(0, 0, 0, 0)
 
     local text = frame:CreateFontString(nil, 'ARTWORK')
-    text:SetFont('Fonts\\FRIZQT__.TTF', 11, 'THICKOUTLINE')
-    text:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, 0)
 
     local function updateText()
         if #flags > 0 then
@@ -40,8 +39,10 @@ function addon.createIndicator(parentFrame)
         local point = addon.config.db.indicatorPos
         local offsets = positionOffsets[point]
 
-        frame:ClearAllPoints()
-        frame:SetPoint(point, frame:GetParent(), point, offsets.x, offsets.y)
+        text:ClearAllPoints()
+        text:SetPoint(point, frame:GetParent(), point, offsets.x, offsets.y)
+        text:SetFont('Fonts\\FRIZQT__.TTF', addon.config.db.flagFontSize, 'THICKOUTLINE')
+
         updateText()
     end
 

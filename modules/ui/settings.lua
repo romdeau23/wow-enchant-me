@@ -22,6 +22,7 @@ function settings.init()
             container:Add('TOPRIGHT', 'Top right')
             container:Add('BOTTOMLEFT', 'Bottom left')
             container:Add('BOTTOMRIGHT', 'Bottom right')
+            container:Add('CENTER', 'Center')
 
             return container:GetData()
         end
@@ -41,6 +42,16 @@ function settings.init()
         end
 
         Settings.CreateDropdown(category, setting, options, 'Color of the indicator flag text')
+    end)
+
+    -- flag font size
+    addSetting('flagFontSize', 'Flag font size', 'number', function (setting)
+        local options = Settings.CreateSliderOptions(5, 40, 1)
+        options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
+            return tostring(value)
+        end)
+
+        Settings.CreateSlider(category, setting, options, 'Font size of the indicator flag text')
     end)
 
     -- show missing armor sockets

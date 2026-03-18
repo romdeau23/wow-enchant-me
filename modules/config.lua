@@ -6,19 +6,21 @@ addon.config = config
 ---@type ConfigModule.Config
 local DEFAULT_CONFIG = {
     indicatorPos = 'TOPLEFT',
+    flagFontSize = 11,
     flagColor = 'ffff0000',
     showMissingArmorSockets = false,
 }
 
 ---@class ConfigModule.Config
 ---@field indicatorPos string
+---@field flagFontSize number
 ---@field flagColor string
 ---@field showMissingArmorSockets boolean
 
 function config.init()
     config.db = addon.loadSavedVar(
         'EnchantMeAddonConfig',
-        5,
+        6,
         DEFAULT_CONFIG,
         private.migrations
     )
@@ -43,5 +45,8 @@ private.migrations = {
     end,
     [5] = function (data)
         data.showMissingJewelrySockets = nil
+    end,
+    [6] = function (data)
+        data.flagFontSize = 11
     end,
 }
