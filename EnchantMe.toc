@@ -1,6 +1,6 @@
-## Interface: 120007, 120100
+## Interface: 120105, 120107
 ## Title: Enchant Me
-## Version: 1.9.1
+## Version: 1.9.2
 ## Author: romdeau23
 ## Notes: Check equipped items for missing enchants and gems
 ## SavedVariables: EnchantMeAddonConfig

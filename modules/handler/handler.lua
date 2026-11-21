@@ -43,7 +43,7 @@ function addon.createHandler(unit, slots, updateGuard, getSlotFrame)
 
         -- update flags
         for slotName, slot in pairs(slots) do
-            local itemLink = GetInventoryItemLink(unit, GetInventorySlotInfo(slotName))
+            local itemLink = GetInventoryItemLink(unit, C_PaperDollInfo.GetInventorySlotInfo(slotName))
 
             if itemLink then
                 local item = addon.createItem(itemLink)
